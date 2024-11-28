@@ -38,9 +38,9 @@
             <label class="col-md-4 control-label" for="role">Role</label>
             <div class="col-md-4">
                 <select id="role" name="role" class="form-control">
-                    <option value="USER">USER</option>
-                    <option value="ADMIN">ADMIN</option>
-                    <option value="GUEST">GUEST</option>
+                    <c:forEach var="role" items="${applicationScope.roles}">
+                        <option value="${role}" ${role==requestScope.user.role?"selected":""}>${role}</option>
+                    </c:forEach>
                 </select>
             </div>
         </div>
@@ -49,8 +49,12 @@
         <div class="form-group">
             <label class="col-md-4 control-label" for="update">Operation</label>
             <div class="col-md-8">
+                <c:if test="${requestScope.user==null}">
                 <button type="submit" id="update" name="update" class="btn btn-success">Update</button>
+                </c:if>
+                <c:if test="${requestScope.user!=null}">
                 <button type="submit" id="create" name="create" class="btn btn-danger">Create</button>
+                </c:if>
             </div>
         </div>
 

@@ -1,5 +1,6 @@
 package com.javarush.zubakha.project;
 
+import com.javarush.zubakha.project.entity.Role;
 import com.javarush.zubakha.project.entity.User;
 import com.javarush.zubakha.project.service.UserService;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,21 @@ public class EditUserServlet extends HttpServlet {
         request.setAttribute("user", user);
         request.getRequestDispatcher("/WEB-INF/edit-user.jsp").forward(request, response);
 
+    }
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        User user = User.builder()
+                .login(request.getParameter("login"))
+                .password(request.getParameter("password"))
+                .role(Role.valueOf(request.getParameter("role")))
+                .build();
+        if (request.getParameter("create") != null) {
+            userService.create(user);
+        } else if (request.getParameter("update") != null) {
+            user.setId(Long.parseLong(request.getParameter("id")));
+            userService.update(user);
+
+        }
     }
 
 }
