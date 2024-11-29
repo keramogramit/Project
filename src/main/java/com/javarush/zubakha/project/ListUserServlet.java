@@ -11,7 +11,7 @@ import jakarta.servlet.annotation.*;
 
 @WebServlet(value = "/list-user")
 public class ListUserServlet extends HttpServlet {
-    private final UserService userService = UserService.USER_SERVICE;
+    private final UserService userService = Winter.find(UserService.class);
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Collection<User> userCollection = userService.getAll();

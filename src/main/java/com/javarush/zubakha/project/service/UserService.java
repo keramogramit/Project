@@ -7,11 +7,13 @@ import com.javarush.zubakha.project.repository.Repository;
 import java.util.Collection;
 import java.util.Optional;
 
-public enum UserService {
+public class UserService {
+    private final Repository<User> userRepository;
 
-    USER_SERVICE;
+    public UserService(Repository<User> userRepository){
+        this.userRepository = userRepository;
 
-    private final Repository<User> userRepository = new UserRepository();
+    }
 
     public void create(User user) {
         userRepository.create(user);
