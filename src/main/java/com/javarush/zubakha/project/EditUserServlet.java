@@ -3,27 +3,40 @@ package com.javarush.zubakha.project;
 import com.javarush.zubakha.project.entity.Role;
 import com.javarush.zubakha.project.entity.User;
 import com.javarush.zubakha.project.service.UserService;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
+
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Optional;
 
 @WebServlet(value = "/edit-user")
 public class EditUserServlet extends HttpServlet {
-    private final UserService userService = UserService.USER_SERVICE;
+    private final UserService userService = Winter.find(UserService.class);
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String stringId = request.getParameter("id");
-        long id = Long.parseLong(stringId);
-        User user = userService.get(id).orElseThrow();
-        request.setAttribute("user", user);
-        request.getRequestDispatcher("/WEB-INF/edit-user.jsp").forward(request, response);
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        config.getServletContext().setAttribute("roles", Role.values());
+    }
 
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String stringId = req.getParameter("id");
+        if (stringId != null) {
+            long id = Long.parseLong(stringId);
+            Optional<User> optionalUser = userService.get(id);
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                req.setAttribute("user", user);
+            }
+        }
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/edit-user.jsp");
+        requestDispatcher.forward(req, resp);
     }
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -39,6 +52,7 @@ public class EditUserServlet extends HttpServlet {
             userService.update(user);
 
         }
+        response.sendRedirect("edit-user?id=" + user.getId());
     }
 
 }
